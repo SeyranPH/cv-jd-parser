@@ -1,11 +1,20 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import { Redis } from 'ioredis';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
 import pdfParse from 'pdf-parse';
 import * as mammoth from 'mammoth';
 import { ParsedResume, ParsedSection, ParsedLine, WorkExperience, Education, Project } from './cv-parser.types';
 
 @Injectable()
 export class CvParserService {
+  private readonly logger = new Logger(CvParserService.name);
+
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+  ) {}
+
   private readonly sectionKeywords = {
     experience: ['experience', 'work history', 'employment', 'career', 'professional experience', 'work experience'],
     education: ['education', 'academic', 'qualifications', 'degrees', 'university', 'college'],
@@ -21,11 +30,28 @@ export class CvParserService {
       throw new BadRequestException('No file provided');
     }
 
+    // Create hash from file content for caching
+    const buffer = file.buffer || fs.readFileSync(file.path);
+    const hash = crypto.createHash('sha256').update(buffer).digest('hex');
+    const cacheKey = this.getCachedCVKey(hash);
+
+    this.logger.log(`Checking cache for CV key: ${cacheKey}`);
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      this.logger.log('Cache hit - returning cached CV data');
+      return JSON.parse(cached);
+    }
+
+    this.logger.log('Cache miss - parsing CV file');
     const rawText = await this.extractText(file);
     const lines = this.parseLines(rawText);
     const sections = this.groupIntoSections(lines);
     const parsedResume = this.extractStructuredData(sections, rawText);
 
+    this.logger.log('CV parsing completed, caching result');
+    // Cache for 30 days (30*86400 seconds)
+    await this.redis.setex(cacheKey, 30*86400, JSON.stringify(parsedResume));
+    
     return parsedResume;
   }
 
@@ -440,5 +466,9 @@ export class CvParserService {
     }
     
     return { current: false };
+  }
+
+  private getCachedCVKey(hash: string): string {
+    return `cv:${hash}`;
   }
 }

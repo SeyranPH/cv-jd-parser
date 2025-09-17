@@ -4,6 +4,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: cv-backend
+    depends_on:
+      - redis
     ports:
       - "3000:3000"
     env_file:
@@ -11,3 +13,9 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
