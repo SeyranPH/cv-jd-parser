@@ -3,7 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: cv-backend
+    container_name: cv-jd-parser-backend
     depends_on:
       - redis
     ports:
@@ -13,9 +13,24 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cv-jd-parser-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
   redis:
     image: redis:7-alpine
-    container_name: redis
+    container_name: cv-jd-parser-redis
     ports:
       - "6379:6379"
-
