@@ -34,3 +34,16 @@ services:
     container_name: cv-jd-parser-redis
     ports:
       - "6379:6379"
+
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: cv-jd-parser-mcp-server
+    environment:
+      - MCP_PORT=4000
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
+    ports:
+      - "4000:4000"
