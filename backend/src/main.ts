@@ -5,6 +5,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+
+  app.enableCors({
+    origin: '*',
+    credentials: false,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('CV & JD Parser API')
     .setDescription('API for CV parsing and job description analysis')

@@ -1,7 +1,7 @@
 {
-  "name": "cv-enhancer",
+  "name": "cv-jd-parser",
   "version": "0.0.1",
-  "description": "",
+  "description": "APP for CV parsing and job description analysis with AI-powered extraction",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
