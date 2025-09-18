@@ -40,7 +40,7 @@ export class JdParserController {
     description: 'Internal server error - Failed to parse job description',
     type: ErrorResponseDto
   })
-  async parseJobDescription(@Body() parseJobDescriptionDto: ParseJobDescriptionDto) {
+  async parseJobDescription(@Body() parseJobDescriptionDto: ParseJobDescriptionDto): Promise<JobDescriptionResponseDto> {
     const requestId = Math.random().toString(36).substring(7);
     this.logger.log(`[${requestId}] Starting JD parse request, text length: ${parseJobDescriptionDto.text?.length || 0}`);
 

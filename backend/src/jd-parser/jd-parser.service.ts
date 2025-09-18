@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRedis  } from '@nestjs-modules/ioredis';
 import { Redis } from 'ioredis';
 import { AiService } from '../ai/ai.service';
+import { JobDescriptionData } from '../ai/ai.schemas';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class JdParserService {
     @InjectRedis() private readonly redis: Redis,
   ) {}
 
-  async parse(rawText: string) {
+  async parse(rawText: string): Promise<JobDescriptionData> {
     const hash = crypto.createHash('sha256').update(rawText.trim()).digest('hex');
     const cacheKey = this.getCachedJDKey(hash);
 

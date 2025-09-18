@@ -1,86 +1,87 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { WorkExperience, Education, Project, ParsedResume } from '../ai/ai.schemas';
 
-export class WorkExperienceDto {
+export class WorkExperienceDto implements WorkExperience {
   @ApiProperty({ description: 'Company name' })
   company: string;
 
   @ApiProperty({ description: 'Job position/title' })
   position: string;
 
-  @ApiProperty({ description: 'Start date', required: false })
-  startDate?: string;
+  @ApiProperty({ description: 'Start date', nullable: true })
+  startDate: string | null;
 
-  @ApiProperty({ description: 'End date', required: false })
-  endDate?: string;
+  @ApiProperty({ description: 'End date', nullable: true })
+  endDate: string | null;
 
-  @ApiProperty({ description: 'Whether currently employed', required: false })
-  current?: boolean;
+  @ApiProperty({ description: 'Whether currently employed' })
+  current: boolean;
 
-  @ApiProperty({ description: 'Job description', required: false })
-  description?: string;
+  @ApiProperty({ description: 'Job description', nullable: true })
+  description: string | null;
 
-  @ApiProperty({ description: 'Job location', required: false })
-  location?: string;
+  @ApiProperty({ description: 'Job location', nullable: true })
+  location: string | null;
 }
 
-export class EducationDto {
+export class EducationDto implements Education {
   @ApiProperty({ description: 'Institution name' })
   institution: string;
 
   @ApiProperty({ description: 'Degree obtained' })
   degree: string;
 
-  @ApiProperty({ description: 'Field of study', required: false })
-  fieldOfStudy?: string;
+  @ApiProperty({ description: 'Field of study', nullable: true })
+  fieldOfStudy: string | null;
 
-  @ApiProperty({ description: 'Start date', required: false })
-  startDate?: string;
+  @ApiProperty({ description: 'Start date', nullable: true })
+  startDate: string | null;
 
-  @ApiProperty({ description: 'End date', required: false })
-  endDate?: string;
+  @ApiProperty({ description: 'End date', nullable: true })
+  endDate: string | null;
 
-  @ApiProperty({ description: 'GPA', required: false })
-  gpa?: string;
+  @ApiProperty({ description: 'GPA', nullable: true })
+  gpa: string | null;
 
-  @ApiProperty({ description: 'Location', required: false })
-  location?: string;
+  @ApiProperty({ description: 'Location', nullable: true })
+  location: string | null;
 }
 
-export class ProjectDto {
+export class ProjectDto implements Project {
   @ApiProperty({ description: 'Project name' })
   name: string;
 
-  @ApiProperty({ description: 'Project description', required: false })
-  description?: string;
+  @ApiProperty({ description: 'Project description', nullable: true })
+  description: string | null;
 
-  @ApiProperty({ description: 'Technologies used', required: false, type: [String] })
-  technologies?: string[];
+  @ApiProperty({ description: 'Technologies used', type: [String] })
+  technologies: string[];
 
-  @ApiProperty({ description: 'Start date', required: false })
-  startDate?: string;
+  @ApiProperty({ description: 'Start date', nullable: true })
+  startDate: string | null;
 
-  @ApiProperty({ description: 'End date', required: false })
-  endDate?: string;
+  @ApiProperty({ description: 'End date', nullable: true })
+  endDate: string | null;
 
-  @ApiProperty({ description: 'Project URL', required: false })
-  url?: string;
+  @ApiProperty({ description: 'Project URL', nullable: true })
+  url: string | null;
 }
 
-export class ParsedResumeResponseDto {
-  @ApiProperty({ description: 'Full name', required: false })
-  name?: string;
+export class ParsedResumeDataDto implements ParsedResume {
+  @ApiProperty({ description: 'Full name', nullable: true })
+  name: string | null;
 
-  @ApiProperty({ description: 'Email address', required: false })
-  email?: string;
+  @ApiProperty({ description: 'Email address', nullable: true })
+  email: string | null;
 
-  @ApiProperty({ description: 'Phone number', required: false })
-  phone?: string;
+  @ApiProperty({ description: 'Phone number', nullable: true })
+  phone: string | null;
 
-  @ApiProperty({ description: 'Location', required: false })
-  location?: string;
+  @ApiProperty({ description: 'Location', nullable: true })
+  location: string | null;
 
-  @ApiProperty({ description: 'Professional summary', required: false })
-  summary?: string;
+  @ApiProperty({ description: 'Professional summary', nullable: true })
+  summary: string | null;
 
   @ApiProperty({ description: 'Work experience', type: [WorkExperienceDto] })
   experience: WorkExperienceDto[];
@@ -91,15 +92,26 @@ export class ParsedResumeResponseDto {
   @ApiProperty({ description: 'Skills list', type: [String] })
   skills: string[];
 
-  @ApiProperty({ description: 'Certifications', required: false, type: [String] })
-  certifications?: string[];
+  @ApiProperty({ description: 'Certifications', nullable: true, type: [String] })
+  certifications: string[] | null;
 
-  @ApiProperty({ description: 'Languages', required: false, type: [String] })
-  languages?: string[];
+  @ApiProperty({ description: 'Languages', nullable: true, type: [String] })
+  languages: string[] | null;
 
-  @ApiProperty({ description: 'Projects', required: false, type: [ProjectDto] })
-  projects?: ProjectDto[];
+  @ApiProperty({ description: 'Projects', nullable: true, type: [ProjectDto] })
+  projects: ProjectDto[] | null;
 
   @ApiProperty({ description: 'Raw extracted text' })
   rawText: string;
+}
+
+export class ParsedResumeResponseDto {
+  @ApiProperty({ description: 'Success status' })
+  success: boolean;
+
+  @ApiProperty({ description: 'Original filename' })
+  filename: string;
+
+  @ApiProperty({ description: 'Parsed resume data', type: ParsedResumeDataDto })
+  data: ParsedResumeDataDto;
 }

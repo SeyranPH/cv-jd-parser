@@ -2,7 +2,6 @@ import { Controller, Post, UploadedFile, UseInterceptors, Logger, HttpException,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { CvParserService } from './cv-parser.service';
-import { ParsedResume } from './cv-parser.types';
 import { ParsedResumeResponseDto } from './cv-parser.dto';
 import { ErrorResponseDto } from '../common/dto/error.dto';
 
@@ -55,7 +54,7 @@ export class CvParserController {
     description: 'Internal server error - Failed to parse CV',
     type: ErrorResponseDto
   })
-  async parseResume(@UploadedFile() file: Express.Multer.File): Promise<ParsedResume> {
+  async parseResume(@UploadedFile() file: Express.Multer.File): Promise<ParsedResumeResponseDto> {
     const requestId = Math.random().toString(36).substring(7);
     this.logger.log(`[${requestId}] Starting CV parse request, filename: ${file?.originalname || 'unknown'}, size: ${file?.size || 0} bytes`);
 
@@ -87,7 +86,12 @@ export class CvParserController {
       this.logger.log(`[${requestId}] Calling CV parser service`);
       const parsedResume = await this.cvParserService.parseResume(file);
       this.logger.log(`[${requestId}] CV parse completed successfully`);
-      return parsedResume;
+      
+      return {
+        success: true,
+        filename: file.originalname,
+        data: parsedResume,
+      };
     } catch (error) {
       this.logger.error(`[${requestId}] CV parse failed: ${error.message}`, error.stack);
       throw new HttpException(`Failed to parse resume: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);

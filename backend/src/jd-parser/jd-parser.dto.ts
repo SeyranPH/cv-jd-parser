@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { JobDescriptionData } from '../ai/ai.schemas';
 
 export class ParseJobDescriptionDto {
   @ApiProperty({ 
@@ -8,24 +9,24 @@ export class ParseJobDescriptionDto {
   text: string;
 }
 
-export class JobDescriptionDataDto {
-  @ApiProperty({ description: 'Job title' })
-  title: string;
+export class JobDescriptionDataDto implements JobDescriptionData {
+  @ApiProperty({ description: 'Job title', nullable: true })
+  title: string | null;
 
-  @ApiProperty({ description: 'Company name' })
-  company: string;
+  @ApiProperty({ description: 'Company name', nullable: true })
+  company: string | null;
 
-  @ApiProperty({ description: 'Job location' })
-  location: string;
+  @ApiProperty({ description: 'Job location', nullable: true })
+  location: string | null;
 
-  @ApiProperty({ description: 'Remote work type (remote|hybrid|onsite)' })
-  remoteWork: string;
+  @ApiProperty({ description: 'Remote work type (remote|hybrid|onsite)', nullable: true })
+  remoteWork: 'remote' | 'hybrid' | 'onsite' | null;
 
-  @ApiProperty({ description: 'Employment type (full-time|part-time|contract|internship)' })
-  employmentType: string;
+  @ApiProperty({ description: 'Employment type (full-time|part-time|contract|internship)', nullable: true })
+  employmentType: 'full-time' | 'part-time' | 'contract' | 'internship' | null;
 
-  @ApiProperty({ description: 'Experience level (entry|mid|senior|executive|other-value)' })
-  experienceLevel: string;
+  @ApiProperty({ description: 'Experience level (entry|mid|senior|executive)', nullable: true })
+  experienceLevel: 'entry' | 'mid' | 'senior' | 'executive' | null;
 
   @ApiProperty({ description: 'Required skills', type: [String] })
   skills: string[];
@@ -42,11 +43,11 @@ export class JobDescriptionDataDto {
   @ApiProperty({ description: 'Full job description text' })
   description: string;
 
-  @ApiProperty({ description: 'Industry sector', required: false })
-  industry: string;
+  @ApiProperty({ description: 'Industry sector', nullable: true })
+  industry: string | null;
 
-  @ApiProperty({ description: 'Department or team', required: false })
-  department: string;
+  @ApiProperty({ description: 'Department or team', nullable: true })
+  department: string | null;
 }
 
 export class JobDescriptionResponseDto {
